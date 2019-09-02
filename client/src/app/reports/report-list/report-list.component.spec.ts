@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ReportListComponent } from './report-list.component';
 import { HeaderComponent } from 'src/app/header/header.component';
 import { ReportService } from '../report.service';
-import { ReportServiceMock } from 'src/app/shared/test-mocks/mocks';
+import { ReportServiceMock } from 'src/app/shared/test-mocks/mocks.spec';
 
 describe('ReportListComponent', () => {
   let component: ReportListComponent;

@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ReportListFormComponent } from './report-list-form.component';
 import { HeaderComponent } from 'src/app/header/header.component';
 import { ReportService } from '../report.service';
-import { ReportServiceMock } from 'src/app/shared/test-mocks/mocks';
+import { ReportServiceMock } from 'src/app/shared/test-mocks/mocks.spec';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 describe('ReportListFormComponent', () => {

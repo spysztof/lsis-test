@@ -4,7 +4,7 @@ import { AppComponent } from './app.component';
 import { HeaderComponent } from './header/header.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ReportsModule } from './reports/reports.module';
-import { HttpClientMock } from './shared/test-mocks/mocks';
+import { HttpClientMock } from './shared/test-mocks/mocks.spec';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -15,8 +15,6 @@ describe('AppComponent', () => {
 
       ],
       imports: [
-        // FormsModule,
-        // ReactiveFormsModule,
         ReportsModule,
         BsDatepickerModule.forRoot(),
       ],
