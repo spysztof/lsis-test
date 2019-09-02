@@ -5,6 +5,7 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { ReportListComponent } from './report-list/report-list.component';
 import { ReportListFormComponent } from './report-list-form/report-list-form.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 
@@ -16,6 +17,7 @@ import { ReportListFormComponent } from './report-list-form/report-list-form.com
   imports: [
     CommonModule,
     BsDatepickerModule.forRoot(),
+    ReactiveFormsModule,
 
   ],
   exports: [

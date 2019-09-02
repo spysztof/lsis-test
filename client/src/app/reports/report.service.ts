@@ -1,13 +1,45 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, of } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, ReplaySubject } from 'rxjs';
 import { LsiReport } from '../shared/model/lsi-report';
+import { LsiReportFilter } from '../shared/model/lsi-report-filter';
+import { map, tap, withLatestFrom } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReportService {
+
+  public readonly INITAL_FILTERS: LsiReportFilter = {
+    placeFormControl: null,
+    dateFromFormControl: null,
+    dateToFormControl: null,
+  };
+
+  public filteredReports$: Observable<LsiReport[]>
+  public rawReports$: Observable<LsiReport[]>
+
+  constructor(private http: HttpClient) {
+    this.reportFiltersSubject = new BehaviorSubject(this.INITAL_FILTERS);
+    this.rawReportsSubject = new ReplaySubject();
+    this.rawReports$ = this.rawReportsSubject.asObservable();
+
+    this.filteredReports$ = this.reportFiltersSubject
+      .pipe(
+        withLatestFrom(this.rawReports$)
+      ).pipe(
+        tap(([filters, rawReports]) => {
+          // TODO remove this tap in fina version
+          console.log('filters', filters); console.log('rawReports', rawReports);
+        }),
+        map(([filters, rawReports]) => {
+
+          // TODO filter raw data here
+          return rawReports
+        })
+      )
+  }
 
   private reporsMock: LsiReport[] = [
     { id: 1, name: 'Raport 1', date: new Date(), userName: 'Damian', placeName: 'Warszawa', },
@@ -20,9 +52,15 @@ export class ReportService {
     { id: 8, name: 'Raport 5', date: new Date(), userName: 'Kryspin', placeName: 'Łódź', },
   ];
 
-  constructor(private http: HttpClient) { }
+  private rawReportsSubject: ReplaySubject<LsiReport[]>
+  private reportFiltersSubject: Subject<LsiReportFilter>
 
-  public getReports(): Observable<LsiReport[]> {
-    return of(this.reporsMock);
+  public getReports(): void {
+    this.rawReportsSubject.next(this.reporsMock);
+  }
+
+  public filterReports(filters: LsiReportFilter): void {
+    this.reportFiltersSubject
+      .next(filters)
   }
 }
