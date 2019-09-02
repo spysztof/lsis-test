@@ -34,6 +34,5 @@ export class ReportListFormComponent implements OnInit {
 
   public onSubmit() {
     this.reportService.filterReports(this.form.value)
-    // console.log(this.form.value);
   }
 }
