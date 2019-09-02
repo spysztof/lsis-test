@@ -1,0 +1,14 @@
+{
+  "name": "server",
+  "version": "0.0.1",
+  "description": "Simple server with reports collection",
+  "main": "index.js",
+  "scripts": {
+    "start": "json-server db.json"
+  },
+  "author": "Krzysztof Spychała",
+  "license": "MIT",
+  "dependencies": {
+    "json-server": "^0.15.1"
+  }
+}
