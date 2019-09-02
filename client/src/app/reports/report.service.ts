@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
+import { map } from 'rxjs/operators';
 import { Observable, BehaviorSubject, Subject, ReplaySubject, combineLatest } from 'rxjs';
+
 import { LsiReport } from '../shared/model/lsi-report';
 import { LsiReportFilter } from '../shared/model/lsi-report-filter';
-import { map } from 'rxjs/operators';
+import { LsiReportListResponseBody } from '../shared/model/lsi-report-response-body';
+import { LsiReportResponseBody } from '../shared/model/lsi-report-list-response-body';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +37,7 @@ export class ReportService {
       )
   }
 
-  private readonly BASE_URL = 'http://localhost:3000';
+  private readonly BASE_URL = `${environment.api.host}:${environment.api.port}`;
   private rawReportsSubject: ReplaySubject<LsiReport[]>
   private reportFiltersSubject: Subject<LsiReportFilter>
 
@@ -65,11 +69,10 @@ export class ReportService {
       let dateFrom = filters.dateFromFormControl;
       let dateTo = filters.dateToFormControl;
 
-      let inDateRange = dateFrom ? this.stripHours(report.date) >= this.stripHours(dateFrom) : true;
-      inDateRange = dateTo ? this.stripHours(report.date) <= this.stripHours(dateTo) : true;
+      const isAfterDateFrom = dateFrom ? this.stripHours(report.date) >= this.stripHours(dateFrom) : true;
+      const isBeforeDateTo = dateTo ? this.stripHours(report.date) <= this.stripHours(dateTo) : true;
 
-      return (report.placeName === (placeName || report.placeName))
-        && inDateRange
+      return (report.placeName === (placeName || report.placeName)) && isAfterDateFrom && isBeforeDateTo;
     });
   }
 
@@ -78,15 +81,3 @@ export class ReportService {
     return Math.floor(date.getTime() / MILIS_IN_24H);
   }
 }
-
-export interface LsiReportListResponseBody {
-  [index: number]: LsiReportResponseBody
-}
-
-export interface LsiReportResponseBody {
-  id: number;
-  name: string;
-  date: string;
-  userName: string;
-  placeName: string;
-};

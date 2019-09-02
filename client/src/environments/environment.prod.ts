@@ -1,3 +1,7 @@
 export const environment = {
-  production: true
+  production: true,
+  api: {
+    host: 'http://localhost',
+    port: 3000
+  }
 };
