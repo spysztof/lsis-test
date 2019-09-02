@@ -1,0 +1,20 @@
+<table class="table table-hover">
+    <thead class="thead-dark">
+        <tr>
+        <th scope="col" i18n>Nazwa</th>
+        <th scope="col" i18n>Data</th>
+        <th scope="col" i18n>Godzina</th>
+        <th scope="col" i18n>Użytkownik</th>
+        <th scope="col" i18n>Lokal</th>
+        </tr>
+    </thead>
+    <tbody>            
+        <tr *ngFor="let report of reports | async">
+        <td>{{report.name}}</td>
+        <td>{{report.date}}</td>
+        <td>{{report.time}}</td>
+        <td>{{report.user}}</td>
+        <td>{{report.place}}</td>
+        </tr>
+    </tbody>
+</table>
