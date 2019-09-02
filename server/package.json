@@ -1,8 +1,7 @@
 {
   "name": "server",
   "version": "0.0.1",
-  "description": "Simple server with reports collection",
-  "main": "index.js",
+  "description": "Simple server with reports collection based on jason server",
   "scripts": {
     "start": "json-server db.json"
   },

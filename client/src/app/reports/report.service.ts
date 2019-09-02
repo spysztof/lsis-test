@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, BehaviorSubject, Subject, ReplaySubject } from 'rxjs';
+import { Observable, BehaviorSubject, Subject, ReplaySubject, combineLatest } from 'rxjs';
 import { LsiReport } from '../shared/model/lsi-report';
 import { LsiReportFilter } from '../shared/model/lsi-report-filter';
-import { map, withLatestFrom } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -25,37 +25,37 @@ export class ReportService {
     this.rawReportsSubject = new ReplaySubject();
     this.rawReports$ = this.rawReportsSubject.asObservable();
 
-    this.filteredReports$ = this.reportFiltersSubject
+    this.filteredReports$ = combineLatest(this.reportFiltersSubject, this.rawReports$)
       .pipe(
-        withLatestFrom(this.rawReports$)
-      ).pipe(
         map(([filters, rawReports]) => {
           return this.applyFilteres(filters, rawReports)
         })
       )
   }
 
-  private reportsMock: LsiReport[] = [
-    { id: 1, name: 'Raport 1', date: new Date(), userName: 'Damian', placeName: 'Warszawa', },
-    { id: 2, name: 'Raport 2', date: new Date(), userName: 'Kryspin', placeName: 'Łódź', },
-    { id: 3, name: 'Raport 33', date: new Date(), userName: 'Kamil', placeName: 'Warszawa', },
-    { id: 4, name: 'Raport 3', date: new Date(), userName: 'Damian', placeName: 'Łódź', },
-    { id: 5, name: 'Raport 34', date: new Date(), userName: 'Leszek', placeName: 'Łódź', },
-    { id: 6, name: 'Raport 5', date: new Date(), userName: 'Staszek', placeName: 'Łódź', },
-    { id: 7, name: 'Raport 53', date: new Date(), userName: 'Pioter', placeName: 'Warszawa', },
-    { id: 8, name: 'Raport 15', date: new Date(), userName: 'Kryspin', placeName: 'Łódź', },
-  ];
-
+  private readonly BASE_URL = 'http://localhost:3000';
   private rawReportsSubject: ReplaySubject<LsiReport[]>
   private reportFiltersSubject: Subject<LsiReportFilter>
 
-  public getReports(): void {
-    this.rawReportsSubject.next(this.reportsMock);
+  public async getReports(): Promise<void> {
+    const endpoint = '/reports'
+
+    const response = await this.getFromApi<LsiReportListResponseBody>(endpoint)
+      .toPromise<LsiReportListResponseBody>();
+
+    const list = (response as Array<LsiReportResponseBody>)
+      .map(r => { return { ...r, date: new Date(r.date) } });
+
+    this.rawReportsSubject.next(list);
   }
 
   public filterReports(filters: LsiReportFilter): void {
     this.reportFiltersSubject
       .next(filters)
+  }
+
+  private getFromApi<T>(path: string): Observable<T> {
+    return this.http.get<T>(this.BASE_URL + path, { responseType: "json" });
   }
 
   private applyFilteres(filters: LsiReportFilter, rawReports: LsiReport[]): LsiReport[] {
@@ -78,3 +78,15 @@ export class ReportService {
     return Math.floor(date.getTime() / MILIS_IN_24H);
   }
 }
+
+export interface LsiReportListResponseBody {
+  [index: number]: LsiReportResponseBody
+}
+
+export interface LsiReportResponseBody {
+  id: number;
+  name: string;
+  date: string;
+  userName: string;
+  placeName: string;
+};
