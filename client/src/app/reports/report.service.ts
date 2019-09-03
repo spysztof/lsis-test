@@ -77,7 +77,7 @@ export class ReportService {
   }
 
   private stripHours(date: Date | null): number {
-    const MILIS_IN_24H = 86400000;
-    return Math.floor(date.getTime() / MILIS_IN_24H);
+    date.setHours(0,0,0,0);
+    return date.getTime();
   }
 }
